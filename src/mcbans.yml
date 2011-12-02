@@ -1,0 +1,4 @@
+APIKEY: 'CHANGEME'
+URL: 'http://72.10.39.172/v2/%API%'
+MinimumReputationToJoin: 10
+ConsiderForInitialConnectionAttempt: true

@@ -1,0 +1,30 @@
+name: SuperBans
+main: org.kitteh.superbans.SuperBans
+version: 0.0alpha
+website: http://kitteh.org
+author: mbaxter
+description: Super banning solution
+commands:
+  ban:
+    description: Ban
+    aliases: tempban
+    usage: /ban playername
+  unban:
+    description: Unban
+    usage: /unban playername
+  lookup:
+    description: Lookup
+    usage: /lookup playername
+permissions:
+  superbans.ban:
+    description: Ban
+    default: op
+  superbans.unban:
+    description: Unban
+    default: op
+  superbans.lookup:
+    description: Lookup
+    default: op
+  superbans.tempban:
+    description: Temp Ban
+    default: op
