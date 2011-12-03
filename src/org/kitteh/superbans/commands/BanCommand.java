@@ -26,7 +26,7 @@ public class BanCommand implements CommandExecutor {
                 } else {
                     reason = "No reason specified";
                 }
-                BanType banType=BanType.LOCAL;
+                BanType banType = BanType.LOCAL;
                 if (label.equals("BAN")) {
                     banType = BanType.GLOBAL;
                 }

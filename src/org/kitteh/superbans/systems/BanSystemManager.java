@@ -11,7 +11,7 @@ public abstract class BanSystemManager {
         BanSystemManager.internalSystemName = name;
     }
 
-    private HashMap<String, UserData> cache;
+    private final HashMap<String, UserData> cache;
 
     protected SuperBans plugin;
 
@@ -23,7 +23,7 @@ public abstract class BanSystemManager {
 
     public BanSystemManager(SuperBans plugin, String name) {
         this.plugin = plugin;
-        this.cache=new HashMap<String,UserData>();
+        this.cache = new HashMap<String, UserData>();
         BanSystemManager.setName(name);
     }
 

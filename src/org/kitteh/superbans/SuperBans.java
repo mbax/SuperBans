@@ -32,7 +32,7 @@ public class SuperBans extends JavaPlugin {
         SuperBans.instance = me;
     }
 
-    private boolean debug=true;
+    private final boolean debug = true;
 
     private MetaManager manager;
 

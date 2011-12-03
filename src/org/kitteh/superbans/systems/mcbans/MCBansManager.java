@@ -23,7 +23,7 @@ public class MCBansManager extends JSONBanSystemManager {
         @Override
         public void processed(String ID, JSONObject object) {
             final HashMap<String, String> result = MCBansManager.this.JSONToHashMap(object);
-            if(result==null){
+            if (result == null) {
                 SuperBans.log("[MCBans] Failure to connect");
             } else if (result.get("result").equalsIgnoreCase("y")) {
                 SuperBans.log(ChatColor.RED + "[MCBans] Added: " + ID);
@@ -39,12 +39,12 @@ public class MCBansManager extends JSONBanSystemManager {
         @Override
         public void processed(String name, JSONObject object) {
             final HashMap<String, String> result = MCBansManager.this.JSONToHashMap(object);
-            if(result==null){
+            if (result == null) {
                 SuperBans.log("[MCBans] Failure to connect");
             } else if ((result.get("result")).equalsIgnoreCase("y")) {
                 SuperBans.log(ChatColor.RED + "[MCBans] Unbanned " + name);
             } else {
-                SuperBans.log(ChatColor.RED + "[MCBans] Failed to unban " + name+": "+result.get("msg"));
+                SuperBans.log(ChatColor.RED + "[MCBans] Failed to unban " + name + ": " + result.get("msg"));
             }
         }
     }
@@ -102,12 +102,12 @@ public class MCBansManager extends JSONBanSystemManager {
         config.options().copyDefaults(true);
         config.setDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("mcbans.yml")));
         this.url = config.getString("URL").replace("%API%", config.getString("APIKEY"));
-        
+
         this.minRep = config.getDouble("MinimumReputationToJoin");
-        if(minRep==0.0){
-            int tmprep=config.getInt("MinimumReputationToJoin");
-            if(tmprep>0){
-                this.minRep=(double)tmprep;
+        if (this.minRep == 0.0) {
+            final int tmprep = config.getInt("MinimumReputationToJoin");
+            if (tmprep > 0) {
+                this.minRep = tmprep;
                 config.set("MinimumReputationToJoin", this.minRep);
                 SuperBans.log("Fixed your MCBans minimum reputation to be a double.");
             }
@@ -117,7 +117,17 @@ public class MCBansManager extends JSONBanSystemManager {
         } catch (final IOException e) {
             SuperBans.Debug("Error: Could not save mcbans.yml", e);
         }
-        this.initialLogin = config.getBoolean("ConsiderForInitialConnectionAttempt") || (this.minRep >0);
+        this.initialLogin = config.getBoolean("ConsiderForInitialConnectionAttempt") || (this.minRep > 0);
+    }
+
+    @Override
+    public UserData acquireLookup(String name) {
+        final HashMap<String, String> POSTData = new HashMap<String, String>();
+        POSTData.put("player", name);
+        POSTData.put("admin", "SuperBans");
+        POSTData.put("exec", "playerLookup");
+        final JSONObject json = this.MCBansAPICall(POSTData);
+        return MCBansManager.processLookup(json);
     }
 
     @Override
@@ -153,18 +163,18 @@ public class MCBansManager extends JSONBanSystemManager {
             try {
                 final String banStatus = object.getString("banStatus");
                 if (!banStatus.equalsIgnoreCase("n")) {
-                    String reason=object.getString("banReason");
-                    if(!reason.equals("")){
-                        event.disallow(Result.KICK_BANNED, reason);
-                        SuperBans.log("Disconnected "+event.getName()+" for MCBans ban: "+reason);
+                    final String reason = object.getString("banReason");
+                    if (!reason.equals("")) {
+                        event.disallow(Result.KICK_BANNED, "Banned: " + reason);
+                        SuperBans.log("Disconnected " + event.getName() + " for MCBans ban: " + reason);
                         return;
                     }
                 }
                 final double rep = object.getDouble("playerRep");
-                System.out.println("Rep:"+rep+" MIN:"+this.minRep);
+                System.out.println("Rep:" + rep + " MIN:" + this.minRep);
                 if (rep < this.minRep) {
                     event.disallow(Result.KICK_OTHER, "Your MCBans reputation is too low!");
-                    SuperBans.log("Disconnected "+event.getName()+" for low reputation: "+rep);
+                    SuperBans.log("Disconnected " + event.getName() + " for low reputation: " + rep);
                     return;
                 }
             } catch (final JSONException e) {
@@ -184,15 +194,5 @@ public class MCBansManager extends JSONBanSystemManager {
 
     private JSONObject MCBansAPICall(HashMap<String, String> POSTData) {
         return JSONBanSystemManager.APICall(this.url, POSTData);
-    }
-
-    @Override
-    public UserData acquireLookup(String name) {
-        final HashMap<String, String> POSTData = new HashMap<String, String>();
-        POSTData.put("player", name);
-        POSTData.put("admin", "SuperBans");
-        POSTData.put("exec", "playerLookup");
-        final JSONObject json = this.MCBansAPICall(POSTData);
-        return MCBansManager.processLookup(json);
     }
 }
