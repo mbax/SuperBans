@@ -23,6 +23,7 @@ public abstract class BanSystemManager {
 
     public BanSystemManager(SuperBans plugin, String name) {
         this.plugin = plugin;
+        this.cache=new HashMap<String,UserData>();
         BanSystemManager.setName(name);
     }
 
@@ -32,6 +33,7 @@ public abstract class BanSystemManager {
         UserData data = this.cache.get(name);
         if ((data == null) || data.old()) {
             data = this.acquireLookup(name);
+            this.cache.put(name, data);
         }
         return data;
     }

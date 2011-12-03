@@ -18,9 +18,7 @@ public class BanCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        final boolean ban = sender.hasPermission("superbans.ban");
-        final boolean tempban = sender.hasPermission("superbans.tempban");
-        if (ban || tempban) {
+        if (sender.hasPermission("superbans.ban")) {
             if (args.length > 0) {
                 String reason;
                 if (args.length > 1) {
@@ -28,19 +26,9 @@ public class BanCommand implements CommandExecutor {
                 } else {
                     reason = "No reason specified";
                 }
-
-                BanType banType = BanType.TEMP;
-                boolean banning = false;
+                BanType banType=BanType.LOCAL;
                 if (label.equals("BAN")) {
                     banType = BanType.GLOBAL;
-                    banning = true;
-                } else if (label.equalsIgnoreCase("ban")) {
-                    banType = BanType.LOCAL;
-                    banning = true;
-                }
-                if ((banning && !ban) || (!banning && !tempban)) {
-                    sender.sendMessage(ChatColor.RED + "I'm afraid you're not qualified");
-                    return true;
                 }
                 final Player target = this.plugin.getServer().getPlayer(args[0]);
                 String ip;

@@ -35,7 +35,8 @@ public class MetaManager extends BanSystemManager {
 
     @Override
     protected UserData acquireLookup(String name) {
-        return null;
+        //TEMP UGLY
+        return this.mcbans.acquireLookup(name);
     }
 
 }

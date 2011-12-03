@@ -32,7 +32,7 @@ public class SuperBans extends JavaPlugin {
         SuperBans.instance = me;
     }
 
-    private boolean debug;
+    private boolean debug=true;
 
     private MetaManager manager;
 
@@ -70,11 +70,11 @@ public class SuperBans extends JavaPlugin {
             public void onPlayerPreLogin(PlayerPreLoginEvent event) {
                 SuperBans.this.getManager().playerPreLogin(event);
             }
-        }, Priority.Lowest, this);
+        }, Priority.Normal, this);
 
         final BanCommand banCommand = new BanCommand(this);
         this.getCommand("ban").setExecutor(banCommand);
-        this.getCommand("tempban").setExecutor(banCommand);
+        //this.getCommand("tempban").setExecutor(banCommand);
         this.getCommand("unban").setExecutor(new UnbanCommand(this));
         this.getCommand("lookup").setExecutor(new LookupCommand(this));
 

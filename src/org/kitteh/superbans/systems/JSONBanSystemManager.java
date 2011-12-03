@@ -78,7 +78,7 @@ public abstract class JSONBanSystemManager extends BanSystemManager {
         String preprocessed;
         try {
             final String POSTstring = JSONBanSystemManager.postVariable(POSTData);
-            final URL urlTarget = new URL(URLEncoder.encode(url.replace(" ", "%20"), "UTF-8"));
+            final URL urlTarget = new URL(url.replace(" ", "%20"));
             final URLConnection connection = urlTarget.openConnection();
             connection.setDoOutput(true);
             connection.setConnectTimeout(8000);
@@ -100,6 +100,7 @@ public abstract class JSONBanSystemManager extends BanSystemManager {
             SuperBans.Debug("Error communicating to " + BanSystemManager.getName(), e);
             preprocessed = "";
         }
+        System.out.println(preprocessed);
         JSONObject result = null;
         try {
             result = new JSONObject(preprocessed);

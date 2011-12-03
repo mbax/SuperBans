@@ -7,7 +7,6 @@ description: Super banning solution
 commands:
   ban:
     description: Ban
-    aliases: tempban
     usage: /ban playername
   unban:
     description: Unban
@@ -26,5 +25,11 @@ permissions:
     description: Lookup
     default: op
   superbans.tempban:
-    description: Temp Ban
+    description: Temp Ban. Currently unsupported.
     default: op
+  superbans.all:
+    children: 
+      superbans.ban: true
+      superbans.unban: true
+      superbans.lookup: true
+      superbans.tempban: true
