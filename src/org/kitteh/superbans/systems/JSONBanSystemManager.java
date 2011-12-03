@@ -100,7 +100,6 @@ public abstract class JSONBanSystemManager extends BanSystemManager {
             SuperBans.Debug("Error communicating to " + BanSystemManager.getName(), e);
             preprocessed = "";
         }
-        System.out.println(preprocessed);
         JSONObject result = null;
         try {
             result = new JSONObject(preprocessed);

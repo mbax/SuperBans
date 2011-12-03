@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.player.PlayerPreLoginEvent;
@@ -26,11 +25,11 @@ public class MCBansManager extends JSONBanSystemManager {
             if (result == null) {
                 SuperBans.log("[MCBans] Failure to connect");
             } else if (result.get("result").equalsIgnoreCase("y")) {
-                SuperBans.log(ChatColor.RED + "[MCBans] Added: " + ID);
+                SuperBans.log("[MCBans] Added: " + ID);
             } else if (result.get("result").equalsIgnoreCase("a")) {
-                SuperBans.log(ChatColor.RED + "[MCBans] Player already on list: " + ID);
+                SuperBans.log("[MCBans] Player already on list: " + ID);
             } else if (result.get("result").equalsIgnoreCase("n")) {
-                SuperBans.log(ChatColor.RED + "[MCBans] Could not add: " + ID);
+                SuperBans.log("[MCBans] Could not add: " + ID);
             }
         }
     }
@@ -42,9 +41,9 @@ public class MCBansManager extends JSONBanSystemManager {
             if (result == null) {
                 SuperBans.log("[MCBans] Failure to connect");
             } else if ((result.get("result")).equalsIgnoreCase("y")) {
-                SuperBans.log(ChatColor.RED + "[MCBans] Unbanned " + name);
+                SuperBans.log("[MCBans] Unbanned " + name);
             } else {
-                SuperBans.log(ChatColor.RED + "[MCBans] Failed to unban " + name + ": " + result.get("msg"));
+                SuperBans.log("[MCBans] Failed to unban " + name + ": " + result.get("msg"));
             }
         }
     }
