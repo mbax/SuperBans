@@ -1,4 +1,13 @@
-APIKEY: 'CHANGEME'
-URL: 'http://72.10.39.172/v2/%API%'
-MinimumReputationToJoin: 0
-ConsiderForInitialConnectionAttempt: true
+Features:
+    Ban: true
+    Unban: true
+    Lookup: true
+    MinRep: true
+    CheckAtLogin: true
+Settings:
+    MinRep:
+        Minimum: 0.0
+    APIKEY: 'CHANGEME'
+DONOTTOUCH:
+    UNLESSTOLDTO:
+        URL: 'http://72.10.39.172/v2/%API%'

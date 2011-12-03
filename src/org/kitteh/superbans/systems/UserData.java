@@ -6,13 +6,13 @@ import java.util.HashMap;
 public class UserData {
     private final Date creationTime;
 
-    private final HashMap<String, Object> extra;
+    private final HashMap<String, String> extra;
     private final BanList banList;
 
     public UserData() {
         this.creationTime = new Date();
         this.banList = new BanList();
-        this.extra = new HashMap<String, Object>();
+        this.extra = new HashMap<String, String>();
     }
 
     public HashMap<String, Object> cloneExtra() {
@@ -35,9 +35,9 @@ public class UserData {
         return (this.creationTime.getTime() + 300000) < ((new Date()).getTime());
     }
 
-    public void setExtra(String key, Object object) {
+    public void setExtra(String key, String value) {
         synchronized (this.extra) {
-            this.extra.put(key, object);
+            this.extra.put(key, value);
         }
     }
 }

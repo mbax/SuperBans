@@ -1,5 +1,6 @@
 package org.kitteh.superbans.commands;
 
+import java.util.Iterator;
 import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
@@ -13,8 +14,11 @@ public class LookupCommand implements CommandExecutor {
 
     private final SuperBans plugin;
 
-    public LookupCommand(SuperBans plugin) {
+    private final int max;
+
+    public LookupCommand(SuperBans plugin, int max) {
         this.plugin = plugin;
+        this.max = max;
     }
 
     @Override
@@ -30,8 +34,23 @@ public class LookupCommand implements CommandExecutor {
                     }
                 }
                 sender.sendMessage(ChatColor.AQUA + info.toString());
-                for (final String ban : data.getBanList().getList()) {
-                    sender.sendMessage(ban);
+
+                int offset = 0;
+                if (args.length > 1) {
+                    offset = Integer.valueOf(args[1]);
+                }
+                final Iterator<String> iterator = data.getBanList().getList().iterator();
+                for (int x = 0; (x < offset) && iterator.hasNext(); x++) {
+                    iterator.next();
+                }
+                if (!iterator.hasNext()) {
+                    sender.sendMessage(ChatColor.GREEN + "No bans to list");
+                }
+                for (int x = 0; (x < this.max) && iterator.hasNext(); x++) {
+                    sender.sendMessage(iterator.next());
+                }
+                if (iterator.hasNext()) {
+                    sender.sendMessage(ChatColor.RED + "And many more than I can list");
                 }
             } else {
                 sender.sendMessage(ChatColor.RED + "Forgot a name");

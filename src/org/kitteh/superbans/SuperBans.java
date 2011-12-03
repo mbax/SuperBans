@@ -72,12 +72,15 @@ public class SuperBans extends JavaPlugin {
             }
         }, Priority.Normal, this);
 
+        this.getConfig().options().copyDefaults(true);
+        
         final BanCommand banCommand = new BanCommand(this);
         this.getCommand("ban").setExecutor(banCommand);
         //this.getCommand("tempban").setExecutor(banCommand);
         this.getCommand("unban").setExecutor(new UnbanCommand(this));
-        this.getCommand("lookup").setExecutor(new LookupCommand(this));
-
+        this.getCommand("lookup").setExecutor(new LookupCommand(this, this.getConfig().getInt("Features.Lookup.MaxLength")));
+        this.saveConfig();
+        
         SuperBans.log("Version " + this.getDescription().getVersion() + " enabled!");
     }
 

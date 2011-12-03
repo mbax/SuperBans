@@ -68,6 +68,10 @@ public class MCBansManager extends JSONBanSystemManager {
         final UserData data = new UserData();
         try {
             final JSONArray local = json.optJSONArray("local");
+            if (local == null) {
+                SuperBans.log("Unable to properly communicate with MCBans. Check your API Key");
+                return data;
+            }
             for (int i = 0; i < local.length(); i++) {
                 final String[] ban = MCBansManager.processBanLookup(local.getString(i));
                 data.getBanList().addBanData(new MCBansBanData(ban[1], MCBansBanData.BanType.LOCAL, ban[0]));
@@ -80,13 +84,15 @@ public class MCBansManager extends JSONBanSystemManager {
         } catch (final JSONException e) {
             e.printStackTrace();
         }
-        data.setExtra("mcbans_rep", json.optDouble("reputation", 10.0));
+        data.setExtra("mcbans_rep", String.valueOf(json.optDouble("reputation", 10.0)));
         return data;
     }
 
     private final String url;
 
     private final boolean initialLogin;
+
+    private final boolean enable_bans, enable_unbans, enable_lookup, enable_loginban, enable_minrep;
 
     private double minRep;
 
@@ -100,17 +106,22 @@ public class MCBansManager extends JSONBanSystemManager {
         final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "mcbans.yml"));
         config.options().copyDefaults(true);
         config.setDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("mcbans.yml")));
-        this.url = config.getString("URL").replace("%API%", config.getString("APIKEY"));
+        this.url = config.getString("DONOTTOUCH.UNLESSTOLDTO.URL").replace("%API%", config.getString("Settings.APIKEY"));
 
-        this.minRep = config.getDouble("MinimumReputationToJoin");
+        this.minRep = config.getDouble("Settings.MinRep.Minimum");
         if (this.minRep == 0.0) {
-            final int tmprep = config.getInt("MinimumReputationToJoin");
+            final int tmprep = config.getInt("Settings.MinRep.Minimum");
             if (tmprep > 0) {
                 this.minRep = tmprep;
-                config.set("MinimumReputationToJoin", this.minRep);
+                config.set("Settings.MinRep.Minimum", this.minRep);
                 SuperBans.log("Fixed your MCBans minimum reputation to be a double.");
             }
         }
+        this.enable_bans = config.getBoolean("Features.Ban");
+        this.enable_loginban = config.getBoolean("Features.CheckAtLogin");
+        this.enable_lookup = config.getBoolean("Features.Lookup");
+        this.enable_unbans = config.getBoolean("Features.Unban");
+        this.enable_minrep = config.getBoolean("Features.MinRep");
         try {
             config.save(file);
         } catch (final IOException e) {
@@ -121,6 +132,9 @@ public class MCBansManager extends JSONBanSystemManager {
 
     @Override
     public UserData acquireLookup(String name) {
+        if (!this.enable_lookup) {
+            return new UserData();
+        }
         final HashMap<String, String> POSTData = new HashMap<String, String>();
         POSTData.put("player", name);
         POSTData.put("admin", "SuperBans");
@@ -131,6 +145,9 @@ public class MCBansManager extends JSONBanSystemManager {
 
     @Override
     public void ban(String name, String reason, String admin, String ip, BanType banType) {
+        if (!this.enable_bans) {
+            return;
+        }
         final HashMap<String, String> POSTData = new HashMap<String, String>();
         POSTData.put("player", name);
         POSTData.put("admin", admin);
@@ -163,7 +180,7 @@ public class MCBansManager extends JSONBanSystemManager {
                 final String banStatus = object.getString("banStatus");
                 if (!banStatus.equalsIgnoreCase("n")) {
                     final String reason = object.getString("banReason");
-                    if (!reason.equals("")) {
+                    if (!reason.equals("") && this.enable_loginban) {
                         event.disallow(Result.KICK_BANNED, "Banned: " + reason);
                         SuperBans.log("Disconnected " + event.getName() + " for MCBans ban: " + reason);
                         return;
@@ -171,7 +188,7 @@ public class MCBansManager extends JSONBanSystemManager {
                 }
                 final double rep = object.getDouble("playerRep");
                 System.out.println("Rep:" + rep + " MIN:" + this.minRep);
-                if (rep < this.minRep) {
+                if ((rep < this.minRep) && this.enable_minrep) {
                     event.disallow(Result.KICK_OTHER, "Your MCBans reputation is too low!");
                     SuperBans.log("Disconnected " + event.getName() + " for low reputation: " + rep);
                     return;
@@ -184,6 +201,9 @@ public class MCBansManager extends JSONBanSystemManager {
 
     @Override
     public void unban(String name, String admin) {
+        if (!this.enable_unbans) {
+            return;
+        }
         final HashMap<String, String> POSTData = new HashMap<String, String>();
         POSTData.put("player", name);
         POSTData.put("exec", "unBan");
