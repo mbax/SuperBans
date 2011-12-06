@@ -25,7 +25,7 @@ public class LookupCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender.hasPermission("superbans.lookup")) {
             if (args.length > 0) {
-                final UserData data = this.plugin.getManager().lookup(args[0]);
+                final UserData data = SuperBans.getManager().lookup(args[0]);
                 final StringBuilder info = new StringBuilder();
                 info.append("Player ").append(args[0]);
                 for (final Entry<String, Object> entry : data.cloneExtra().entrySet()) {

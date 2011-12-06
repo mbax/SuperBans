@@ -29,6 +29,8 @@ public abstract class BanSystemManager {
 
     public abstract void ban(String name, String reason, String admin, String ip, BanType banType);
 
+    public abstract void disable();
+
     public UserData lookup(String name) {
         UserData data = this.cache.get(name);
         if ((data == null) || data.old()) {

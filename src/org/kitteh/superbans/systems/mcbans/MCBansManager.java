@@ -4,14 +4,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent.Result;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.kitteh.superbans.SuperBans;
+import org.kitteh.superbans.systems.BanSystem;
 import org.kitteh.superbans.systems.JSONBanSystemManager;
 import org.kitteh.superbans.systems.UserData;
 import org.kitteh.superbans.systems.mcbans.MCBansBanData.BanType;
@@ -30,6 +33,37 @@ public class MCBansManager extends JSONBanSystemManager {
                 SuperBans.log("[MCBans] Player already on list: " + ID);
             } else if (result.get("result").equalsIgnoreCase("n")) {
                 SuperBans.log("[MCBans] Could not add: " + ID);
+            }
+        }
+    }
+
+    private class MCBansCallBack implements Runnable {
+
+        @Override
+        public void run() {
+            final HashMap<String, String> POSTData = new HashMap<String, String>();
+            final String maxPlayers = String.valueOf(SuperBans.server().getMaxPlayers());
+            POSTData.put("maxPlayers", maxPlayers);
+            final StringBuilder playerList = new StringBuilder();
+            for (final Player player : SuperBans.server().getOnlinePlayers()) {
+                if (player != null) {
+                    playerList.append(player.getName()).append(",");
+                }
+            }
+            playerList.substring(0, playerList.length() - 2);
+            POSTData.put("playerList", playerList.toString());
+            POSTData.put("version", "SuperBans" + SuperBans.getVersion());
+            POSTData.put("exec", "callBack");
+            final JSONObject result = MCBansManager.this.MCBansAPICall(POSTData);
+            if (result.has("hasNotices")) {
+                final HashMap<String, String> d = MCBansManager.this.JSONToHashMap(result);
+                for (final String key : d.keySet()) {
+                    if (key.contains("notice")) {
+                        final String notice = d.get(key);
+                        SuperBans.messageByPerm("superbans.notice", ChatColor.RED + "[MCBans] " + ChatColor.WHITE + notice);
+                        SuperBans.log("[MCBans] Notice: " + notice);
+                    }
+                }
             }
         }
     }
@@ -88,11 +122,15 @@ public class MCBansManager extends JSONBanSystemManager {
         return data;
     }
 
+    private final String MCBansURL = "http://72.10.39.172/v2/%API%";
+
     private final String url;
 
     private final boolean initialLogin;
 
-    private final boolean enable_bans, enable_unbans, enable_lookup, enable_loginban, enable_minrep;
+    private final boolean enable_bans, enable_unbans, enable_lookup, enable_loginban, enable_minrep, enable_callback;
+
+    private int callBackScheduleID;
 
     private double minRep;
 
@@ -106,7 +144,7 @@ public class MCBansManager extends JSONBanSystemManager {
         final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "mcbans.yml"));
         config.options().copyDefaults(true);
         config.setDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("mcbans.yml")));
-        this.url = config.getString("DONOTTOUCH.UNLESSTOLDTO.URL").replace("%API%", config.getString("Settings.APIKEY"));
+        this.url = this.MCBansURL.replace("%API%", config.getString("Settings.APIKEY"));
 
         this.minRep = config.getDouble("Settings.MinRep.Minimum");
         if (this.minRep == 0.0) {
@@ -122,6 +160,10 @@ public class MCBansManager extends JSONBanSystemManager {
         this.enable_lookup = config.getBoolean("Features.Lookup");
         this.enable_unbans = config.getBoolean("Features.Unban");
         this.enable_minrep = config.getBoolean("Features.MinRep");
+        this.enable_callback = config.getBoolean("Features.CallBack");
+        if (this.enable_callback) {
+            this.callBackScheduleID = plugin.getServer().getScheduler().scheduleAsyncRepeatingTask(plugin, new MCBansCallBack(), 10, 18000);
+        }
         try {
             config.save(file);
         } catch (final IOException e) {
@@ -169,12 +211,17 @@ public class MCBansManager extends JSONBanSystemManager {
     }
 
     @Override
+    public void disable() {
+        SuperBans.server().getScheduler().cancelTask(this.callBackScheduleID);
+    }
+
+    @Override
     public void playerPreLogin(PlayerPreLoginEvent event) {
         final HashMap<String, String> POSTData = new HashMap<String, String>();
         POSTData.put("player", event.getName().toLowerCase());
         POSTData.put("playerip", event.getAddress().getHostAddress());
         POSTData.put("exec", "playerConnect");
-        final JSONObject object = JSONBanSystemManager.APICall(this.url, POSTData);
+        final JSONObject object = this.MCBansAPICall(POSTData);
         if (this.initialLogin) {
             try {
                 final String banStatus = object.getString("banStatus");
@@ -212,6 +259,25 @@ public class MCBansManager extends JSONBanSystemManager {
     }
 
     private JSONObject MCBansAPICall(HashMap<String, String> POSTData) {
-        return JSONBanSystemManager.APICall(this.url, POSTData);
+        final JSONObject obj = JSONBanSystemManager.APICall(this.url, POSTData);
+        if (obj.has("error")) {
+            try {
+                final String error = obj.getString("error");
+                if (error.contains("Server Disabled")) {
+                    SuperBans.log("[MCBans] The API key has been disabled by the MCBans admins");
+                    SuperBans.log("[MCBans] Contact MCBans for more information. Disabling MCBans features.");
+                    SuperBans.getManager().disable(BanSystem.MCBANS);
+                } else if (error.contains("api key not found.")) {
+                    SuperBans.log("[MCBans] The API key you provided is not valid");
+                    SuperBans.log("[MCBans] Look up the right one. Disabling MCBans features.");
+                    SuperBans.getManager().disable(BanSystem.MCBANS);
+                } else {
+                    SuperBans.log("[MCBans] Unknown error received from the API");
+                }
+            } catch (final JSONException e) {
+                SuperBans.log("[MCBans] Unknown error received");
+            }
+        }
+        return obj;
     }
 }

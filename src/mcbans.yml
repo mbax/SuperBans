@@ -1,13 +1,35 @@
+#MCBans Configuration
+#If you wish to use MCBans, make sure it is enabled in config.yml
+#
+#FEATURES CONFIGURATION
+# Here, we define what features you wish to be enabled.
+# In order, we have the ban command, unban command,
+#  lookup command
+# Then, there's MinRep
+#   MinRep lets you define a minimum MCBans reputation
+#    for all players joining your server.
+# CheckAtLogin will check for bans from your server
+#  and bans from the MCBans system (0/10 rep) and
+#   will block users from joining based on that.
+#   I advise leaving this disabled unless you only use MCBans
+# Lastly, CallBack is required if you wish to show up on
+#  the MCBans system as an active server
 Features:
     Ban: true
     Unban: true
     Lookup: true
     MinRep: true
     CheckAtLogin: true
+    CallBack: true
+#
+#SETTINGS CONFIGURATION
+# If you have enabled MinRep above, define a value above 0 here
+# For instance, MinRep of 5.0 means nobody with a rep below
+#  5.0 can join your server
+# Default value: 0.0, also known as "anybody can join!"
+# 
+# Be sure to set your APIKEY here. You can find this on your dashboard.
 Settings:
     MinRep:
         Minimum: 0.0
     APIKEY: 'CHANGEME'
-DONOTTOUCH:
-    UNLESSTOLDTO:
-        URL: 'http://72.10.39.172/v2/%API%'

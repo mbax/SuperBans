@@ -1,3 +1,7 @@
 Features:
     Lookup:
-        MaxLength: 5    
+        MaxLength: 5
+#Define what ban systems you wish to use here.
+#True for enabled, false for disabled
+Systems:
+    MCBans: true

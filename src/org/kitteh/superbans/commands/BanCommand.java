@@ -41,7 +41,7 @@ public class BanCommand implements CommandExecutor {
                     name = args[0];
                     ip = "0.0.0.0";
                 }
-                this.plugin.getManager().ban(name, reason, sender.getName(), ip, banType);
+                SuperBans.getManager().ban(name, reason, sender.getName(), ip, banType);
             } else {
                 sender.sendMessage(ChatColor.RED + "Forgot a name");
             }

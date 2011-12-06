@@ -18,7 +18,7 @@ public class UnbanCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender.hasPermission("superbans.unban")) {
             if (args.length > 0) {
-                this.plugin.getManager().unban(args[0], sender.getName());
+                SuperBans.getManager().unban(args[0], sender.getName());
                 sender.sendMessage("Unbanning " + args[0]);
             } else {
                 sender.sendMessage(ChatColor.RED + "Forgot a name");

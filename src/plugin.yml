@@ -27,9 +27,13 @@ permissions:
   superbans.tempban:
     description: Temp Ban. Currently unsupported.
     default: op
+  superbans.notice:
+    description: Receive notices
+    default: op
   superbans.all:
     children: 
       superbans.ban: true
       superbans.unban: true
       superbans.lookup: true
       superbans.tempban: true
+      superbans.notice: true
