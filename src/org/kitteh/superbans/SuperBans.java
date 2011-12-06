@@ -1,5 +1,9 @@
 package org.kitteh.superbans;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.logging.Level;
 
 import org.bukkit.Server;
@@ -25,6 +29,36 @@ public class SuperBans extends JavaPlugin {
         }
         builder.deleteCharAt(builder.length() - 1);
         return builder.toString();
+    }
+
+    public static void defaultConfig(String name) {
+        final File target = new File(SuperBans.instance.getDataFolder(), name);
+        final InputStream source = SuperBans.instance.getResource(name);
+        if (source == null) {
+            return;
+        }
+        if (!SuperBans.instance.getDataFolder().exists()) {
+            SuperBans.instance.getDataFolder().mkdir();
+        }
+        try {
+            if (!target.exists()) {
+                final OutputStream output = new FileOutputStream(target);
+                int len;
+                final byte[] buf = new byte[1024];
+                while ((len = source.read(buf)) > 0) {
+                    output.write(buf, 0, len);
+                }
+                output.close();
+
+            }
+        } catch (final Exception ex) {
+            SuperBans.Debug("Could not save default config to " + target, ex);
+        }
+        try {
+            source.close();
+        } catch (final Exception e) {
+            //Meh
+        }
     }
 
     public static MetaManager getManager() {
@@ -81,6 +115,8 @@ public class SuperBans extends JavaPlugin {
     @Override
     public void onEnable() {
         SuperBans.set(this);
+
+        SuperBans.defaultConfig("config.yml");
 
         this.manager = new MetaManager(this);
         this.manager.enable(BanSystem.MCBANS);

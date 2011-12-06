@@ -140,10 +140,9 @@ public class MCBansManager extends JSONBanSystemManager {
 
     public MCBansManager(SuperBans plugin) {
         super(plugin, "mcbans");
+        SuperBans.defaultConfig("mcbans.yml");
         final File file = new File(plugin.getDataFolder(), "mcbans.yml");
-        final FileConfiguration config = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder(), "mcbans.yml"));
-        config.options().copyDefaults(true);
-        config.setDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("mcbans.yml")));
+        final FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         this.url = this.MCBansURL.replace("%API%", config.getString("Settings.APIKEY"));
 
         this.minRep = config.getDouble("Settings.MinRep.Minimum");
