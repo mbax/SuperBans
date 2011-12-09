@@ -14,12 +14,15 @@ import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.kitteh.superbans.commands.BanCommand;
+import org.kitteh.superbans.commands.KickCommand;
 import org.kitteh.superbans.commands.LookupCommand;
 import org.kitteh.superbans.commands.UnbanCommand;
 import org.kitteh.superbans.systems.BanSystem;
 import org.kitteh.superbans.systems.MetaManager;
 
 public class SuperBans extends JavaPlugin {
+
+    private static SuperBans instance;
 
     public static String combineSplit(int startIndex, String[] string) {
         final StringBuilder builder = new StringBuilder();
@@ -29,6 +32,10 @@ public class SuperBans extends JavaPlugin {
         }
         builder.deleteCharAt(builder.length() - 1);
         return builder.toString();
+    }
+
+    public static void Debug(String message, Exception e) {
+        SuperBans.instance.debuggle(message, e);
     }
 
     public static void defaultConfig(String name) {
@@ -73,12 +80,32 @@ public class SuperBans extends JavaPlugin {
         SuperBans.instance.getServer().getLogger().info("[SuperBans] " + message);
     }
 
+    public static void messageByNoPerm(String permission, String message) {
+        for (final Player player : SuperBans.instance.getServer().getOnlinePlayers()) {
+            if ((player != null) && !player.hasPermission(permission)) {
+                player.sendMessage(message);
+            }
+        }
+    }
+
     public static void messageByPerm(String permission, String message) {
         for (final Player player : SuperBans.instance.getServer().getOnlinePlayers()) {
             if ((player != null) && player.hasPermission(permission)) {
                 player.sendMessage(message);
             }
         }
+    }
+
+    public static void messageByPermExclusion(String permission, String exclude, String message) {
+        for (final Player player : SuperBans.instance.getServer().getOnlinePlayers()) {
+            if ((player != null) && player.hasPermission(permission) && !player.getName().equals(exclude)) {
+                player.sendMessage(message);
+            }
+        }
+    }
+
+    public static void scheduleAsync(Runnable runnable) {
+        SuperBans.instance.getServer().getScheduler().scheduleAsyncDelayedTask(SuperBans.instance, runnable);
     }
 
     public static Server server() {
@@ -92,16 +119,6 @@ public class SuperBans extends JavaPlugin {
     private final boolean debug = true;
 
     private MetaManager manager;
-
-    private static SuperBans instance;
-
-    public static void Debug(String message, Exception e) {
-        SuperBans.instance.debuggle(message, e);
-    }
-
-    public static void scheduleAsync(Runnable runnable) {
-        SuperBans.instance.getServer().getScheduler().scheduleAsyncDelayedTask(SuperBans.instance, runnable);
-    }
 
     public boolean debug() {
         return this.debug;
@@ -133,8 +150,9 @@ public class SuperBans extends JavaPlugin {
         final BanCommand banCommand = new BanCommand(this);
         this.getCommand("ban").setExecutor(banCommand);
         //this.getCommand("tempban").setExecutor(banCommand);
-        this.getCommand("unban").setExecutor(new UnbanCommand(this));
-        this.getCommand("lookup").setExecutor(new LookupCommand(this, this.getConfig().getInt("Features.Lookup.MaxLength")));
+        this.getCommand("unban").setExecutor(new UnbanCommand());
+        this.getCommand("lookup").setExecutor(new LookupCommand(this.getConfig().getInt("Features.Lookup.MaxLength")));
+        this.getCommand("kick").setExecutor(new KickCommand(this));
         this.saveConfig();
 
         SuperBans.log("Version " + this.getDescription().getVersion() + " enabled!");

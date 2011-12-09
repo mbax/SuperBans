@@ -12,12 +12,9 @@ import org.kitteh.superbans.systems.UserData;
 
 public class LookupCommand implements CommandExecutor {
 
-    private final SuperBans plugin;
-
     private final int max;
 
-    public LookupCommand(SuperBans plugin, int max) {
-        this.plugin = plugin;
+    public LookupCommand(int max) {
         this.max = max;
     }
 

@@ -14,6 +14,9 @@ commands:
   lookup:
     description: Lookup
     usage: /lookup playername
+  kick:
+    description: Kick
+    usage: /kick playername
 permissions:
   superbans.ban:
     description: Ban
@@ -30,6 +33,9 @@ permissions:
   superbans.notice:
     description: Receive notices
     default: op
+  superbans.kick:
+    description: Kick folks
+    default: op
   superbans.all:
     children: 
       superbans.ban: true
@@ -37,3 +43,4 @@ permissions:
       superbans.lookup: true
       superbans.tempban: true
       superbans.notice: true
+      superbans.kick: true

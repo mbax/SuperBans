@@ -1,7 +1,15 @@
-Features:
-    Lookup:
-        MaxLength: 5
+# SuperBans
+#
+#  Main configuration
+#
 #Define what ban systems you wish to use here.
 #True for enabled, false for disabled
 Systems:
     MCBans: true
+#
+#Features definition 
+# Lookup MaxLength:
+#  How many lookups to display per listing.
+Features:
+    Lookup:
+        MaxLength: 5

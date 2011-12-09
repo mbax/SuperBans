@@ -11,6 +11,7 @@ import org.kitteh.superbans.systems.mcbans.MCBansBanData.BanType;
 public class BanCommand implements CommandExecutor {
 
     private final SuperBans plugin;
+    private final String perm = "superbans.ban";
 
     public BanCommand(SuperBans plugin) {
         this.plugin = plugin;
@@ -18,7 +19,7 @@ public class BanCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (sender.hasPermission("superbans.ban")) {
+        if (sender.hasPermission(this.perm)) {
             if (args.length > 0) {
                 String reason;
                 if (args.length > 1) {
@@ -37,11 +38,16 @@ public class BanCommand implements CommandExecutor {
                     name = target.getName();
                     ip = target.getAddress().getAddress().getHostAddress();
                     target.kickPlayer(ChatColor.RED + "Banned: " + ChatColor.WHITE + reason);
+                    SuperBans.messageByNoPerm(this.perm, ChatColor.RED + name + " banned: " + ChatColor.WHITE + reason);
                 } else {
                     name = args[0];
                     ip = "0.0.0.0";
                 }
+
+                SuperBans.messageByPermExclusion(this.perm, sender.getName(), ChatColor.RED + "[" + sender.getName() + "] " + name + " banned: " + ChatColor.WHITE + reason);
+                sender.sendMessage(ChatColor.RED + "Banned " + name);
                 SuperBans.getManager().ban(name, reason, sender.getName(), ip, banType);
+                SuperBans.log(sender.getName() + " banned " + name);
             } else {
                 sender.sendMessage(ChatColor.RED + "Forgot a name");
             }
