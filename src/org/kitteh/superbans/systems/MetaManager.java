@@ -14,6 +14,8 @@ public class MetaManager extends BanSystemManager {
 
     public MetaManager(SuperBans plugin) {
         super(plugin, "Meta");
+        this.enabledSystems= new ArrayList<BanSystem>();
+        this.enabledSystems.add(BanSystem.MCBANS);//LOL HAX
         if (this.enabledSystems.contains(BanSystem.MCBANS)) {
             this.mcbans = new MCBansManager(plugin);
         }

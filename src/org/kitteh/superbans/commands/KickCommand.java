@@ -19,17 +19,22 @@ public class KickCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender.hasPermission(this.perm)) {
+            if (args.length == 0) {
+                sender.sendMessage(ChatColor.RED + "/kick playername {reason}");
+                return true;
+            }
             final Player target = this.plugin.getServer().getPlayer(args[0]);
             if (target != null) {
                 final StringBuilder kick = new StringBuilder();
-                kick.append(ChatColor.RED).append("icked").append(ChatColor.WHITE);
+                kick.append("icked");
                 if (args.length > 1) {
-                    kick.append(": ").append(SuperBans.combineSplit(1, args));
+                    kick.append(": ").append(ChatColor.WHITE).append(SuperBans.combineSplit(1, args));
                 }
                 final String message = kick.toString();
                 SuperBans.messageByNoPerm(this.perm, ChatColor.RED + target.getName() + " k" + message);
                 SuperBans.messageByPermExclusion(this.perm, sender.getName(), ChatColor.RED + "[" + sender.getName() + "] " + target.getName() + " k" + message);
-                target.kickPlayer("K" + message);
+                SuperBans.log(ChatColor.stripColor(target.getName() + " k" + message));
+                target.kickPlayer(ChatColor.RED + "K" + message);
             }
         } else {
             sender.sendMessage(ChatColor.RED + "I'm sorry " + sender.getName() + " I'm afraid I can't do that");
