@@ -6,11 +6,13 @@ import org.kitteh.superbans.systems.JSONBanSystemManager;
 import org.kitteh.superbans.systems.UserData;
 import org.kitteh.superbans.systems.mcbans.MCBansBanData.BanType;
 
-/** Unimplemented
+/**
+ * Unimplemented
+ * 
  * @author Matt
- *
+ * 
  */
-public class MCACManager extends JSONBanSystemManager{
+public class MCACManager extends JSONBanSystemManager {
 
     public MCACManager(SuperBans plugin, String name) {
         super(plugin, name);
@@ -18,22 +20,22 @@ public class MCACManager extends JSONBanSystemManager{
 
     @Override
     public void ban(String name, String reason, String admin, String ip, BanType banType) {
-        
+
     }
 
     @Override
     public void disable() {
-        
+
     }
 
     @Override
     public void playerPreLogin(PlayerPreLoginEvent event) {
-        
+
     }
 
     @Override
     public void unban(String name, String admin) {
-        
+
     }
 
     @Override

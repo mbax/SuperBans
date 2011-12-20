@@ -10,12 +10,17 @@ import org.kitteh.superbans.systems.mcbans.MCBansManager;
 public class MetaManager extends BanSystemManager {
 
     private MCBansManager mcbans;
+    private ExceptionsManager exceptions;
     ArrayList<BanSystem> enabledSystems;
 
     public MetaManager(SuperBans plugin) {
         super(plugin, "Meta");
-        this.enabledSystems= new ArrayList<BanSystem>();
+        this.enabledSystems = new ArrayList<BanSystem>();
         this.enabledSystems.add(BanSystem.MCBANS);//LOL HAX
+        this.enabledSystems.add(BanSystem.EXCEPTIONS);//LOL HAX
+        if (this.enabledSystems.contains(BanSystem.EXCEPTIONS)) {
+            this.exceptions = new ExceptionsManager();
+        }
         if (this.enabledSystems.contains(BanSystem.MCBANS)) {
             this.mcbans = new MCBansManager(plugin);
         }
@@ -48,6 +53,9 @@ public class MetaManager extends BanSystemManager {
 
     @Override
     public void playerPreLogin(PlayerPreLoginEvent event) {
+        if (this.enabledSystems.contains(BanSystem.EXCEPTIONS) && this.exceptions.exception(event.getName())) {
+            return;
+        }
         if (this.enabledSystems.contains(BanSystem.MCBANS)) {
             this.mcbans.playerPreLogin(event);
         }
