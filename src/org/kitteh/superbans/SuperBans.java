@@ -37,6 +37,10 @@ public class SuperBans extends JavaPlugin {
     public static void Debug(String message, Exception e) {
         SuperBans.instance.debuggle(message, e);
     }
+    
+    public static void Debug(String message){
+        SuperBans.instance.debuggle(message);
+    }
 
     public static void defaultConfig(String name) {
         final File target = new File(SuperBans.instance.getDataFolder(), name);
@@ -163,6 +167,12 @@ public class SuperBans extends JavaPlugin {
             this.getServer().getLogger().log(Level.WARNING, message, e);
         } else {
             SuperBans.log(message);
+        }
+    }
+    
+    private void debuggle(String message){
+        if(this.debug){
+            this.getServer().getLogger().log(Level.INFO, "[SuperBans] "+ message);
         }
     }
 

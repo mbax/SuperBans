@@ -24,6 +24,7 @@ public class ExceptionsManager {
     }
 
     private void load() {
+        this.exceptions = new HashSet<String>();
         FileReader fileReader = null;
         try {
             fileReader = new FileReader("exceptionsTEMP.txt");
@@ -32,7 +33,6 @@ public class ExceptionsManager {
             return;
         }
         final BufferedReader bufferedReader = new BufferedReader(fileReader);
-        this.exceptions = new HashSet<String>();
         String line = null;
         try {
             while ((line = bufferedReader.readLine()) != null) {

@@ -46,11 +46,13 @@ public class MCBansManager extends JSONBanSystemManager {
             POSTData.put("maxPlayers", maxPlayers);
             final StringBuilder playerList = new StringBuilder();
             for (final Player player : SuperBans.server().getOnlinePlayers()) {
-                if (player != null) {
-                    playerList.append(player.getName()).append(",");
+                if (player != null){
+                    if(playerList.length()>0) {
+                        playerList.append(",");
+                    }
+                    playerList.append(player.getName());
                 }
             }
-            playerList.substring(0, playerList.length() - 2);
             POSTData.put("playerList", playerList.toString());
             POSTData.put("version", "SuperBans" + SuperBans.getVersion());
             POSTData.put("exec", "callBack");
@@ -168,7 +170,7 @@ public class MCBansManager extends JSONBanSystemManager {
         } catch (final IOException e) {
             SuperBans.Debug("Error: Could not save mcbans.yml", e);
         }
-        this.initialLogin = config.getBoolean("ConsiderForInitialConnectionAttempt") || (this.minRep > 0);
+        this.initialLogin = this.enable_loginban || (this.minRep > 0);
     }
 
     @Override
