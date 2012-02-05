@@ -46,8 +46,8 @@ public class MCBansManager extends JSONBanSystemManager {
             POSTData.put("maxPlayers", maxPlayers);
             final StringBuilder playerList = new StringBuilder();
             for (final Player player : SuperBans.server().getOnlinePlayers()) {
-                if (player != null){
-                    if(playerList.length()>0) {
+                if (player != null) {
+                    if (playerList.length() > 0) {
                         playerList.append(",");
                     }
                     playerList.append(player.getName());
@@ -235,7 +235,7 @@ public class MCBansManager extends JSONBanSystemManager {
                     }
                 }
                 final double rep = object.getDouble("playerRep");
-                System.out.println("Rep:" + rep + " MIN:" + this.minRep);
+                SuperBans.Debug("Rep:" + rep + " MIN:" + this.minRep);
                 if ((rep < this.minRep) && this.enable_minrep) {
                     event.disallow(Result.KICK_OTHER, "Your MCBans reputation is too low!");
                     SuperBans.log("Disconnected " + event.getName() + " for low reputation: " + rep);

@@ -43,7 +43,6 @@ public class BanCommand implements CommandExecutor {
                     name = args[0];
                     ip = "0.0.0.0";
                 }
-
                 SuperBans.messageByPermExclusion(this.perm, sender.getName(), ChatColor.RED + "[" + sender.getName() + "] " + name + " banned: " + ChatColor.WHITE + reason);
                 sender.sendMessage(ChatColor.RED + "Banned " + name);
                 SuperBans.getManager().ban(name, reason, sender.getName(), ip, banType);

@@ -8,9 +8,8 @@ import java.util.logging.Level;
 
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
-import org.bukkit.event.player.PlayerListener;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.kitteh.superbans.commands.BanCommand;
@@ -20,7 +19,7 @@ import org.kitteh.superbans.commands.UnbanCommand;
 import org.kitteh.superbans.systems.BanSystem;
 import org.kitteh.superbans.systems.MetaManager;
 
-public class SuperBans extends JavaPlugin {
+public class SuperBans extends JavaPlugin implements Listener {
 
     private static SuperBans instance;
 
@@ -34,12 +33,12 @@ public class SuperBans extends JavaPlugin {
         return builder.toString();
     }
 
+    public static void Debug(String message) {
+        SuperBans.instance.debuggle(message);
+    }
+
     public static void Debug(String message, Exception e) {
         SuperBans.instance.debuggle(message, e);
-    }
-    
-    public static void Debug(String message){
-        SuperBans.instance.debuggle(message);
     }
 
     public static void defaultConfig(String name) {
@@ -120,7 +119,7 @@ public class SuperBans extends JavaPlugin {
         SuperBans.instance = me;
     }
 
-    private final boolean debug = true;
+    private boolean debug;
 
     private MetaManager manager;
 
@@ -142,14 +141,11 @@ public class SuperBans extends JavaPlugin {
         this.manager = new MetaManager(this);
         this.manager.enable(BanSystem.MCBANS);
 
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_PRELOGIN, new PlayerListener() {
-            @Override
-            public void onPlayerPreLogin(PlayerPreLoginEvent event) {
-                SuperBans.getManager().playerPreLogin(event);
-            }
-        }, Priority.Normal, this);
+        this.getServer().getPluginManager().registerEvents(this, this);
 
         this.getConfig().options().copyDefaults(true);
+
+        this.debug = this.getConfig().getBoolean("debugmode", false);
 
         final BanCommand banCommand = new BanCommand(this);
         this.getCommand("ban").setExecutor(banCommand);
@@ -162,17 +158,22 @@ public class SuperBans extends JavaPlugin {
         SuperBans.log("Version " + this.getDescription().getVersion() + " enabled!");
     }
 
+    @EventHandler
+    public void onPlayerPreLogin(PlayerPreLoginEvent event) {
+        SuperBans.getManager().playerPreLogin(event);
+    }
+
+    private void debuggle(String message) {
+        if (this.debug) {
+            this.getServer().getLogger().log(Level.INFO, "[SuperBans] " + message);
+        }
+    }
+
     private void debuggle(String message, Exception e) {
         if (this.debug) {
             this.getServer().getLogger().log(Level.WARNING, message, e);
         } else {
             SuperBans.log(message);
-        }
-    }
-    
-    private void debuggle(String message){
-        if(this.debug){
-            this.getServer().getLogger().log(Level.INFO, "[SuperBans] "+ message);
         }
     }
 

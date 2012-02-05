@@ -96,7 +96,7 @@ public abstract class JSONBanSystemManager extends BanSystemManager {
             writer.close();
             reader.close();
             preprocessed = stringBuilder.toString();
-            SuperBans.Debug("Received from API: "+preprocessed);
+            SuperBans.Debug("Received from API: " + preprocessed);
         } catch (final Exception e) {
             SuperBans.Debug("Error communicating to " + BanSystemManager.getName(), e);
             preprocessed = "";
