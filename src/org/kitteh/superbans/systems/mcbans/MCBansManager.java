@@ -84,7 +84,7 @@ public class MCBansManager extends JSONBanSystemManager {
         }
     }
 
-    private static String[] processBanLookup(String listing) {
+    private String[] processBanLookup(String listing) {
         final String[] result = new String[2];
         final String[] split = listing.split(" .:. ");
         if (split.length > 0) {
@@ -100,7 +100,7 @@ public class MCBansManager extends JSONBanSystemManager {
         return result;
     }
 
-    private static UserData processLookup(JSONObject json) {
+    private UserData processLookup(JSONObject json) {
         final UserData data = new UserData();
         try {
             final JSONArray local = json.optJSONArray("local");
@@ -109,12 +109,12 @@ public class MCBansManager extends JSONBanSystemManager {
                 return data;
             }
             for (int i = 0; i < local.length(); i++) {
-                final String[] ban = MCBansManager.processBanLookup(local.getString(i));
+                final String[] ban = processBanLookup(local.getString(i));
                 data.getBanList().addBanData(new MCBansBanData(ban[1], MCBansBanData.BanType.LOCAL, ban[0]));
             }
             final JSONArray global = json.optJSONArray("global");
             for (int i = 0; i < global.length(); i++) {
-                final String[] ban = MCBansManager.processBanLookup(global.getString(i));
+                final String[] ban = processBanLookup(global.getString(i));
                 data.getBanList().addBanData(new MCBansBanData(ban[1], MCBansBanData.BanType.GLOBAL, ban[0]));
             }
         } catch (final JSONException e) {
@@ -124,7 +124,7 @@ public class MCBansManager extends JSONBanSystemManager {
         return data;
     }
 
-    private final String MCBansURL = "http://72.10.39.172/v2/%API%";
+    private final String MCBANS_URL = "http://72.10.39.172/v2/";
 
     private final String url;
 
@@ -145,7 +145,7 @@ public class MCBansManager extends JSONBanSystemManager {
         SuperBans.defaultConfig("mcbans.yml");
         final File file = new File(plugin.getDataFolder(), "mcbans.yml");
         final FileConfiguration config = YamlConfiguration.loadConfiguration(file);
-        this.url = this.MCBansURL.replace("%API%", config.getString("Settings.APIKEY"));
+        this.url = this.MCBANS_URL+ config.getString("Settings.APIKEY");
 
         this.minRep = config.getDouble("Settings.MinRep.Minimum");
         if (this.minRep == 0.0) {
@@ -183,7 +183,7 @@ public class MCBansManager extends JSONBanSystemManager {
         POSTData.put("admin", "SuperBans");
         POSTData.put("exec", "playerLookup");
         final JSONObject json = this.MCBansAPICall(POSTData);
-        return MCBansManager.processLookup(json);
+        return processLookup(json);
     }
 
     @Override

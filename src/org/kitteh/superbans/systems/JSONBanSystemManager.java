@@ -59,6 +59,9 @@ public abstract class JSONBanSystemManager extends BanSystemManager {
     }
 
     private static String postVariable(HashMap<String, String> variables) {
+        if(variables.isEmpty()){
+            return "";
+        }
         try {
             final StringBuilder stringBuilder = new StringBuilder();
             for (final Map.Entry<String, String> entry : variables.entrySet()) {

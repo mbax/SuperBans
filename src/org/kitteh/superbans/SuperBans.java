@@ -139,7 +139,6 @@ public class SuperBans extends JavaPlugin implements Listener {
         SuperBans.defaultConfig("config.yml");
 
         this.manager = new MetaManager(this);
-        this.manager.enable(BanSystem.MCBANS);
 
         this.getServer().getPluginManager().registerEvents(this, this);
 

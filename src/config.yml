@@ -6,6 +6,7 @@
 #True for enabled, false for disabled
 Systems:
     MCBans: true
+    MCBouncer: true
 #
 #Features definition 
 # Lookup MaxLength:

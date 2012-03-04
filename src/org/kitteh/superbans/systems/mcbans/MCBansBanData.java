@@ -26,9 +26,8 @@ public class MCBansBanData implements BanData {
     }
 
     private final String reason;
-    private final BanType type;
-
     private final String server;
+    private final BanType type;
 
     public MCBansBanData(String reason, BanType type, String server) {
         this.reason = reason;

@@ -1,0 +1,20 @@
+#MCBouncer Configuration
+#If you wish to use MCBouncer, make sure it is enabled in config.yml
+#
+#FEATURES CONFIGURATION
+# Here, we define what features you wish to be enabled.
+# In order, we have the ban command, unban command,
+#  lookup command
+# CheckAtLogin will check for bans from your server
+#   and will block users from joining based on that.
+Features:
+    Ban: true
+    Unban: true
+    Lookup: true
+    CheckAtLogin: true
+#
+#SETTINGS CONFIGURATION
+# 
+# Be sure to set your APIKEY here. You can find this on the site.
+Settings:
+    APIKEY: 'CHANGEME'
